@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#0e1116">
+  <meta name="description" content="Private on-device trading journal. Trades and chart photos stay on this phone.">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Trade Journal">
+  <title>Trade Journal</title>
+  <!-- Relative URLs so the same files work at /trade-journal/ on GitHub Pages. -->
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icons/favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="stylesheet" href="styles.css">
+  <script>
+    try {
+      var standalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+      if (standalone || localStorage.getItem('tj-hide-install-tip') === '1') {
+        document.documentElement.classList.add('tip-off');
+      }
+    } catch (e) {}
+  </script>
+</head>
+<body>
+  <p id="booting" class="booting">Opening journal…</p>
+  <p id="boot-error" class="boot-error" hidden></p>
+
+  <div id="app" hidden>
+    <header class="hero">
+      <div class="wrap">
+        <div class="sticky-bar">
+          <div class="toprow">
+            <h1>
+              <svg class="logo" viewBox="0 0 32 32" aria-hidden="true">
+                <rect x="15" y="3" width="2.5" height="26" rx="1" fill="#d7b56a"/>
+                <rect x="9" y="9" width="14" height="13" rx="2.5" fill="#f0c36a"/>
+              </svg>
+              Trade Journal
+            </h1>
+            <button type="button" class="btn ghost" id="export-btn">Export</button>
+            <label class="btn ghost file-btn">
+              Import
+              <input id="import-file" type="file" accept="application/json,.json">
+            </label>
+          </div>
+          <p id="save-state" class="sub" aria-live="polite">Saved on this phone</p>
+          <div class="filters" id="filters" role="tablist" aria-label="Show trades">
+            <button type="button" role="tab" id="tab-open" data-filter="open" aria-selected="true">Open <span id="count-open">0</span></button>
+            <button type="button" role="tab" id="tab-closed" data-filter="closed" aria-selected="false">Closed <span id="count-closed">0</span></button>
+            <button type="button" role="tab" id="tab-all" data-filter="all" aria-selected="false">All <span id="count-all">0</span></button>
+          </div>
+        </div>
+        <div class="tip" id="tip">
+          <p>Add to your iPhone home screen from Safari: Share → Add to Home Screen.</p>
+          <button type="button" class="btn ghost" id="tip-dismiss">Got it</button>
+        </div>
+        <dl class="stats">
+          <div class="stat">
+            <dt>Open</dt>
+            <dd id="stat-open">0</dd>
+          </div>
+          <div class="stat">
+            <dt>Closed</dt>
+            <dd id="stat-closed">0</dd>
+          </div>
+          <div class="stat">
+            <dt>Realized P&amp;L</dt>
+            <dd id="stat-realized">$0.00</dd>
+          </div>
+          <div class="stat">
+            <dt>Win rate</dt>
+            <dd id="stat-win">—</dd>
+          </div>
+          <div class="stat stat-float">
+            <dt>Floating P&amp;L</dt>
+            <dd id="stat-float">$0.00</dd>
+          </div>
+        </dl>
+      </div>
+    </header>
+
+    <main>
+      <div class="wrap">
+        <div id="list" aria-label="Trades"></div>
+        <p id="empty" class="empty" hidden></p>
+      </div>
+    </main>
+
+    <div class="dock">
+      <div class="wrap">
+        <button type="button" class="btn primary" id="add-trade">Add trade</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="viewer" class="viewer" hidden role="dialog" aria-modal="true" aria-label="Chart photo">
+    <div class="viewer-bar">
+      <button type="button" id="viewer-close">Close</button>
+      <p id="viewer-caption"></p>
+      <button type="button" id="viewer-remove">Remove</button>
+    </div>
+    <div id="viewer-stage" class="viewer-stage">
+      <img id="viewer-img" alt="Chart photo" draggable="false">
+    </div>
+    <div class="viewer-tools">
+      <button type="button" id="viewer-prev">Prev</button>
+      <button type="button" id="viewer-zoom-out" aria-label="Zoom out">−</button>
+      <button type="button" id="viewer-fit">Fit</button>
+      <button type="button" id="viewer-zoom-in" aria-label="Zoom in">+</button>
+      <button type="button" id="viewer-next">Next</button>
+    </div>
+  </div>
+
+  <div id="modal" class="modal" hidden>
+    <div class="modal-backdrop" id="modal-backdrop"></div>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-describedby="modal-body">
+      <h2 id="modal-title"></h2>
+      <p id="modal-body"></p>
+      <div class="modal-actions">
+        <button type="button" class="btn ghost" id="modal-cancel">Cancel</button>
+        <button type="button" class="btn danger" id="modal-ok">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <p id="toast" class="toast" hidden role="status"></p>
+
+  <noscript>
+    <p class="boot-error">Trade Journal needs JavaScript. It still keeps every trade on this phone — nothing is sent to a server.</p>
+  </noscript>
+
+  <script src="db.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
